@@ -8,6 +8,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Getter
+@Setter
+@ToString
 @Builder
 public class Employee {
     @EqualsAndHashCode.Exclude

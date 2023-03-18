@@ -106,13 +106,12 @@ public class ConnectionPool {
             }
         }
     }
-    
+
     private void createConnection() throws SQLException, InterruptedException {
         Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
         ProxyConnection proxyConnection = new ProxyConnection(connection);
         connections.put(proxyConnection);
     }
-
 
     private static void loadDriver() {
         try {
