@@ -1,20 +1,18 @@
-package com.innowise.accountingsystem.model.dao.impl;
+package com.innowise.accountingsystem.dao;
 
 import com.innowise.accountingsystem.exception.DaoException;
-import com.innowise.accountingsystem.model.connection.ConnectionPool;
-import com.innowise.accountingsystem.model.dao.EmployeeDao;
-import com.innowise.accountingsystem.model.entity.Employee;
-import com.innowise.accountingsystem.model.mapper.RowMapper;
-import com.innowise.accountingsystem.model.mapper.impl.EmployeeRowMapper;
+import com.innowise.accountingsystem.connection.ConnectionPool;
+import com.innowise.accountingsystem.entity.Employee;
+import com.innowise.accountingsystem.entity.Role;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.innowise.accountingsystem.util.ColumnName.ID;
+import static com.innowise.accountingsystem.util.ColumnName.*;
 
-public class EmployeeDaoImpl implements EmployeeDao {
+public class EmployeeDao {
 
     private static final String SQL_FIND_ALL = """
             SELECT id, email, password, first_name, last_name, salary, birthday, role
@@ -39,19 +37,17 @@ public class EmployeeDaoImpl implements EmployeeDao {
             WHERE id = ?
             """;
 
-    private static final RowMapper<Employee> mapper = EmployeeRowMapper.getInstance();
-    private static final EmployeeDaoImpl instance = new EmployeeDaoImpl();
+    private static final EmployeeDao instance = new EmployeeDao();
     private final ConnectionPool connectionPool;
 
-    private EmployeeDaoImpl() {
+    private EmployeeDao() {
         connectionPool = ConnectionPool.getInstance();
     }
 
-    public static EmployeeDaoImpl getInstance() {
+    public static EmployeeDao getInstance() {
         return instance;
     }
 
-    @Override
     public List<Employee> findAll() {
         List<Employee> employees = new ArrayList<>();
 
@@ -60,8 +56,8 @@ public class EmployeeDaoImpl implements EmployeeDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Optional<Employee> employee = mapper.mapRow(resultSet);
-                employee.ifPresent(employees::add);
+                Employee employee = buildEmployee(resultSet);
+                employees.add(employee);
             }
         } catch (SQLException e) {
             //logger.error("Dao exception trying find all employees", e);
@@ -71,7 +67,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
         return employees;
     }
 
-    @Override
     public Optional<Employee> findById(Long id) {
         Optional<Employee> optionalEmployee;
 
@@ -81,23 +76,19 @@ public class EmployeeDaoImpl implements EmployeeDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                optionalEmployee = mapper.mapRow(resultSet);
-                if (optionalEmployee.isPresent()){
-                    Employee employee = optionalEmployee.get();
-                    optionalEmployee = Optional.of(employee);
-                }
+                Employee employee = buildEmployee(resultSet);
+                optionalEmployee = Optional.of(employee);
             } else {
                 optionalEmployee = Optional.empty();
             }
         } catch (SQLException e) {
-            //logger.error("Dao exception trying find employee by id", e);
+            //logger.error("Dao exception trying to find employee by id", e);
             throw new DaoException(e);
         }
 
         return optionalEmployee;
     }
 
-    @Override
     public Employee save(Employee employee) {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_SAVE, Statement.RETURN_GENERATED_KEYS)) {
@@ -122,7 +113,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
         }
     }
 
-    @Override
     public boolean update(Employee employee) {
         boolean updated = false;
 
@@ -148,7 +138,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
         return updated;
     }
 
-    @Override
     public boolean delete(Long id) {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)){
@@ -159,5 +148,18 @@ public class EmployeeDaoImpl implements EmployeeDao {
             //logger.error("Dao exception trying delete user", e);
             throw new DaoException(e);
         }
+    }
+
+    private Employee buildEmployee(ResultSet resultSet) throws SQLException {
+        return Employee.builder()
+                .id(resultSet.getLong(ID))
+                .email(resultSet.getString(EMAIL))
+                .password(resultSet.getString(PASSWORD))
+                .firstName(resultSet.getString(FIRST_NAME))
+                .lastName(resultSet.getString(LAST_NAME))
+                .salary(resultSet.getBigDecimal(SALARY))
+                .birthday(resultSet.getDate(BIRTHDAY).toLocalDate())
+                .role(Role.valueOf(resultSet.getString(ROLE)))
+                .build();
     }
 }

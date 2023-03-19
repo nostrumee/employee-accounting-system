@@ -1,4 +1,4 @@
-package com.innowise.accountingsystem.model.entity;
+package com.innowise.accountingsystem.entity;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.innowise.accountingsystem.model.connection;
+package com.innowise.accountingsystem.connection;
 
 import java.sql.*;
 import java.util.Map;
