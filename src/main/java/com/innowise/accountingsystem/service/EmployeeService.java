@@ -43,6 +43,7 @@ public class EmployeeService {
             employeeDao.save(employee);
             EmployeeDto employeeDto = employeeMapper.toDto(employee);
             optionalEmployee = Optional.of(employeeDto);
+
         } catch (DaoException e) {
             //log
             throw new ServiceException(e);
@@ -51,11 +52,11 @@ public class EmployeeService {
         return optionalEmployee;
     }
 
-    public Optional<EmployeeDto> getEmployeeById(Long id) {
+    public Optional<EmployeeDto> getEmployeeById(String id) {
         Optional<EmployeeDto> optionalEmployee;
-
+        //validate id
         try {
-            Optional<Employee> employee = employeeDao.findById(id);
+            Optional<Employee> employee = employeeDao.findById(Long.parseLong(id));
             optionalEmployee = employee.map(employeeMapper::toDto);
             return optionalEmployee;
         } catch (DaoException e) {
@@ -72,25 +73,17 @@ public class EmployeeService {
     }
 
     public Optional<EmployeeDto> getEmployeeByEmailAndPassword(String email, String password) {
-        Optional<EmployeeDto> optionalEmployee;
-
-        try {
-            Optional<Employee> employee = employeeDao.findByEmailAndPassword(email, password);
-            optionalEmployee = employee.map(employeeMapper::toDto);
-
-            return optionalEmployee;
-        } catch (DaoException e) {
-            //log.error
-            throw new ServiceException(e);
-        }
-    }
-
-    public Optional<EmployeeDto> getEmployeeByEmail(String email) {
-        Optional<EmployeeDto> optionalEmployee;
+        Optional<EmployeeDto> optionalEmployee = Optional.empty();
 
         try {
             Optional<Employee> employee = employeeDao.findByEmail(email);
-            optionalEmployee = employee.map(employeeMapper::toDto);
+            if (employee.isPresent()) {
+                String hash = employee.get().getPassword();
+                if (passwordEncoder.verify(hash, password)) {
+                    optionalEmployee = employee.map(employeeMapper::toDto);
+                }
+            }
+
             return optionalEmployee;
         } catch (DaoException e) {
             //log.error
@@ -117,20 +110,12 @@ public class EmployeeService {
         return optionalEmployee;
     }
 
-    public boolean deleteEmployee(Long id) {
-        try {
-            Optional<Employee> employee = employeeDao.findById(id);
-            return employeeDao.delete(id);
-        } catch (DaoException e) {
-            //log.error
-            throw new ServiceException(e);
-        }
-    }
+    public boolean deleteEmployee(String id) {
+        //validate id
 
-    public String getEmployeePassword(String email) {
         try {
-            Optional<Employee> employee = employeeDao.findByEmail(email);
-            return employee.get().getPassword();
+            Optional<Employee> employee = employeeDao.findById(Long.parseLong(id));
+            return employeeDao.delete(Long.parseLong(id));
         } catch (DaoException e) {
             //log.error
             throw new ServiceException(e);

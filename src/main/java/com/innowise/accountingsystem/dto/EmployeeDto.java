@@ -1,6 +1,7 @@
 package com.innowise.accountingsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -26,6 +27,9 @@ public class EmployeeDto {
 
     @JsonProperty("email")
     String email;
+
+    @JsonIgnore
+    String password;
 
     @JsonProperty("first_name")
     String firstName;

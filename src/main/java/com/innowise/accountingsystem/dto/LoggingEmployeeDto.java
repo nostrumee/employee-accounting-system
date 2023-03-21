@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @ToString
 @Builder
-public class LoggedEmployeeDto {
+public class LoggingEmployeeDto {
 
     @JsonProperty("email")
     String email;
