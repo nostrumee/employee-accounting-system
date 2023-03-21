@@ -36,6 +36,16 @@ public class EmployeeDao {
             DELETE FROM employee
             WHERE id = ?
             """;
+    private static final String SQL_FIND_BY_EMAIL_AND_PASSWORD = """
+            SELECT id, email, password, first_name, last_name, salary, birthday, role
+            FROM employee
+            WHERE email = ? AND password = ?
+            """;
+    private static final String SQL_FIND_BY_EMAIL = """
+            SELECT id, email, password, first_name, last_name, salary, birthday, role
+            FROM employee
+            WHERE email = ?
+            """;
 
     private static final EmployeeDao instance = new EmployeeDao();
     private final ConnectionPool connectionPool;
@@ -56,7 +66,7 @@ public class EmployeeDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Employee employee = buildEmployee(resultSet);
+                Employee employee = mapToEntity(resultSet);
                 employees.add(employee);
             }
         } catch (SQLException e) {
@@ -76,7 +86,7 @@ public class EmployeeDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                Employee employee = buildEmployee(resultSet);
+                Employee employee = mapToEntity(resultSet);
                 optionalEmployee = Optional.of(employee);
             } else {
                 optionalEmployee = Optional.empty();
@@ -89,7 +99,52 @@ public class EmployeeDao {
         return optionalEmployee;
     }
 
-    public Employee save(Employee employee) {
+    public Optional<Employee> findByEmailAndPassword(String email, String password) {
+        Optional<Employee> optionalEmployee;
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_EMAIL_AND_PASSWORD)) {
+            statement.setString(1, email);
+            statement.setString(2, password);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                Employee employee = mapToEntity(resultSet);
+                optionalEmployee = Optional.of(employee);
+            } else {
+                optionalEmployee = Optional.empty();
+            }
+        } catch (SQLException e) {
+            //logger.error("Dao exception trying to find employee by id", e);
+            throw new DaoException(e);
+        }
+
+        return optionalEmployee;
+    }
+
+    public Optional<Employee> findByEmail(String email) {
+        Optional<Employee> optionalEmployee;
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_EMAIL)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                Employee employee = mapToEntity(resultSet);
+                optionalEmployee = Optional.of(employee);
+            } else {
+                optionalEmployee = Optional.empty();
+            }
+        } catch (SQLException e) {
+            //logger.error("Dao exception trying to find employee by id", e);
+            throw new DaoException(e);
+        }
+
+        return optionalEmployee;
+    }
+
+    public void save(Employee employee) {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_SAVE, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, employee.getEmail());
@@ -105,16 +160,14 @@ public class EmployeeDao {
             var generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
             employee.setId(generatedKeys.getObject(ID, Long.class));
-
-            return employee;
         } catch (SQLException e) {
             //logger.error("Dao exception trying save employee", e);
             throw new DaoException(e);
         }
     }
 
-    public boolean update(Employee employee) {
-        boolean updated = false;
+    public Optional<Employee> update(Employee employee) {
+        Optional<Employee> optionalEmployee = Optional.empty();
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)){
@@ -128,14 +181,14 @@ public class EmployeeDao {
             statement.setObject(8, employee.getId());
 
             if (statement.executeUpdate() != 0){
-                updated = true;
+                optionalEmployee = findById(employee.getId());
             }
         } catch (SQLException e) {
             //logger.error("Dao exception trying update user", e);
             throw new DaoException(e);
         }
 
-        return updated;
+        return optionalEmployee;
     }
 
     public boolean delete(Long id) {
@@ -150,7 +203,7 @@ public class EmployeeDao {
         }
     }
 
-    private Employee buildEmployee(ResultSet resultSet) throws SQLException {
+    private Employee mapToEntity(ResultSet resultSet) throws SQLException {
         return Employee.builder()
                 .id(resultSet.getLong(ID))
                 .email(resultSet.getString(EMAIL))
