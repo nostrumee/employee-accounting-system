@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innowise.accountingsystem.command.Command;
 import com.innowise.accountingsystem.command.CommandType;
 import com.innowise.accountingsystem.dto.EmployeeDto;
-import com.innowise.accountingsystem.validation.ErrorMessage;
+import com.innowise.accountingsystem.util.ResponseMessage;
 import com.innowise.accountingsystem.service.ResponseService;
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,8 +18,9 @@ import java.util.List;
 import static com.innowise.accountingsystem.command.CommandType.*;
 import static com.innowise.accountingsystem.util.AttributeName.COMMAND;
 import static com.innowise.accountingsystem.util.AttributeName.LOGGED_EMPLOYEE;
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.UNAUTHORIZED;
+import static com.innowise.accountingsystem.util.ResponseMessageUtil.UNAUTHORIZED;
 
+@WebFilter(filterName = "CommandFilter", urlPatterns = {"/controller"})
 public class CommandFilter implements Filter {
 
     private final ResponseService responseService = ResponseService.getInstance();
@@ -73,9 +75,9 @@ public class CommandFilter implements Filter {
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-            ErrorMessage errorMessage = new ErrorMessage();
-            errorMessage.setMessage(UNAUTHORIZED);
-            String jsonError = mapper.writeValueAsString(errorMessage);
+            ResponseMessage responseMessage = new ResponseMessage();
+            responseMessage.setMessage(UNAUTHORIZED);
+            String jsonError = mapper.writeValueAsString(responseMessage);
             responseService.processResponse(httpServletResponse, HttpServletResponse.SC_UNAUTHORIZED, jsonError);
         }
     }

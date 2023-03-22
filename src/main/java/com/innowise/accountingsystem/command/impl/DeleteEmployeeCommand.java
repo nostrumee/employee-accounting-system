@@ -3,6 +3,7 @@ package com.innowise.accountingsystem.command.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innowise.accountingsystem.command.Command;
 import com.innowise.accountingsystem.exception.CommandException;
+import com.innowise.accountingsystem.util.ResponseMessage;
 import com.innowise.accountingsystem.exception.ServiceException;
 import com.innowise.accountingsystem.service.EmployeeService;
 import com.innowise.accountingsystem.service.ResponseService;
@@ -15,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 
 import static com.innowise.accountingsystem.util.AttributeName.ID;
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.CANNOT_DELETE_EMPLOYEE;
+import static com.innowise.accountingsystem.util.ResponseMessageUtil.*;
 
 @Slf4j
 @NoArgsConstructor(access =  AccessLevel.PRIVATE)
@@ -36,9 +37,17 @@ public class DeleteEmployeeCommand implements Command {
         try {
             String id = request.getParameter(ID);
             if (employeeService.deleteEmployee(id)) {
-                response.setStatus(HttpServletResponse.SC_OK);
+                ResponseMessage responseMessage = new ResponseMessage();
+                responseMessage.setMessage(USER_DELETED);
+
+                String json = mapper.writeValueAsString(responseMessage);
+                responseService.processResponse(response, HttpServletResponse.SC_OK, json);
             } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, CANNOT_DELETE_EMPLOYEE);
+                ResponseMessage responseMessage = new ResponseMessage();
+                responseMessage.setMessage(CANNOT_DELETE_EMPLOYEE);
+
+                String jsonError = mapper.writeValueAsString(responseMessage);
+                responseService.processResponse(response, HttpServletResponse.SC_NOT_FOUND, jsonError);
             }
         } catch (IOException | ServiceException e) {
             log.error("command exception trying to delete employee", e);

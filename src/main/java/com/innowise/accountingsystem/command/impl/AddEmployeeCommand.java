@@ -5,6 +5,7 @@ import com.innowise.accountingsystem.command.Command;
 import com.innowise.accountingsystem.dto.CreateEmployeeDto;
 import com.innowise.accountingsystem.dto.EmployeeDto;
 import com.innowise.accountingsystem.exception.CommandException;
+import com.innowise.accountingsystem.util.ResponseMessage;
 import com.innowise.accountingsystem.exception.ServiceException;
 import com.innowise.accountingsystem.service.EmployeeService;
 import com.innowise.accountingsystem.service.ResponseService;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.CANNOT_CREATE_EMPLOYEE;
+import static com.innowise.accountingsystem.util.ResponseMessageUtil.CANNOT_CREATE_EMPLOYEE;
 
 @Slf4j
 @NoArgsConstructor(access =  AccessLevel.PRIVATE)
@@ -44,7 +45,11 @@ public class AddEmployeeCommand implements Command {
                 String jsonEmployee = mapper.writeValueAsString(employeeDto.get());
                 responseService.processResponse(response, HttpServletResponse.SC_CREATED, jsonEmployee);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, CANNOT_CREATE_EMPLOYEE);
+                ResponseMessage responseMessage = new ResponseMessage();
+                responseMessage.setMessage(CANNOT_CREATE_EMPLOYEE);
+
+                String jsonError = mapper.writeValueAsString(responseMessage);
+                responseService.processResponse(response, HttpServletResponse.SC_BAD_REQUEST, jsonError);
             }
         } catch (IOException | ServiceException e) {
             log.error("command exception trying to add employee", e);

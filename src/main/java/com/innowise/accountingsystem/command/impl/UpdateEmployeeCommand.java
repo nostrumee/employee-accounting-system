@@ -7,6 +7,7 @@ import com.innowise.accountingsystem.exception.CommandException;
 import com.innowise.accountingsystem.exception.ServiceException;
 import com.innowise.accountingsystem.service.EmployeeService;
 import com.innowise.accountingsystem.service.ResponseService;
+import com.innowise.accountingsystem.util.ResponseMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.CANNOT_UPDATE_EMPLOYEE;
+import static com.innowise.accountingsystem.util.ResponseMessageUtil.CANNOT_UPDATE_EMPLOYEE;
 
 @Slf4j
 @NoArgsConstructor(access =  AccessLevel.PRIVATE)
@@ -43,7 +44,11 @@ public class UpdateEmployeeCommand implements Command {
                 String jsonEmployee = mapper.writeValueAsString(employeeDto.get());
                 responseService.processResponse(response, HttpServletResponse.SC_OK, jsonEmployee);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, CANNOT_UPDATE_EMPLOYEE);
+                ResponseMessage responseMessage = new ResponseMessage();
+                responseMessage.setMessage(CANNOT_UPDATE_EMPLOYEE);
+
+                String jsonError = mapper.writeValueAsString(responseMessage);
+                responseService.processResponse(response, HttpServletResponse.SC_BAD_REQUEST, jsonError);
             }
         } catch (IOException | ServiceException e) {
             log.error("command exception trying to update employee", e);

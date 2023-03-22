@@ -5,6 +5,7 @@ import com.innowise.accountingsystem.command.Command;
 import com.innowise.accountingsystem.dto.EmployeeDto;
 import com.innowise.accountingsystem.dto.LoggingEmployeeDto;
 import com.innowise.accountingsystem.exception.CommandException;
+import com.innowise.accountingsystem.util.ResponseMessage;
 import com.innowise.accountingsystem.exception.ServiceException;
 import com.innowise.accountingsystem.service.EmployeeService;
 import com.innowise.accountingsystem.service.ResponseService;
@@ -20,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.INVALID_CREDENTIALS;
+import static com.innowise.accountingsystem.util.ResponseMessageUtil.*;
 
 @Slf4j
 @NoArgsConstructor(access =  AccessLevel.PRIVATE)
@@ -50,9 +51,17 @@ public class SignInCommand implements Command {
             if (optionalEmployee.isPresent()) {
                 EmployeeDto employee = optionalEmployee.get();
                 session.setAttribute(AttributeName.LOGGED_EMPLOYEE, employee);
-                response.setStatus(HttpServletResponse.SC_OK);
+
+                ResponseMessage responseMessage = new ResponseMessage();
+                responseMessage.setMessage(SUCCESSFULLY_SIGNED_IN);
+
+                String json = mapper.writeValueAsString(responseMessage);
+                responseService.processResponse(response, HttpServletResponse.SC_OK, json);
             } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, INVALID_CREDENTIALS);
+                ResponseMessage responseMessage = new ResponseMessage();
+                responseMessage.setMessage(INVALID_CREDENTIALS);
+                String jsonError = mapper.writeValueAsString(responseMessage);
+                responseService.processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, jsonError);
             }
         } catch (IOException | ServiceException e) {
             log.error("command exception trying to sign in", e);

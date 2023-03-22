@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innowise.accountingsystem.command.Command;
 import com.innowise.accountingsystem.dto.EmployeeDto;
 import com.innowise.accountingsystem.exception.CommandException;
+import com.innowise.accountingsystem.util.ResponseMessage;
 import com.innowise.accountingsystem.exception.ServiceException;
 import com.innowise.accountingsystem.service.EmployeeService;
 import com.innowise.accountingsystem.service.ResponseService;
@@ -16,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.List;
 
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.CANNOT_FIND_EMPLOYEES;
+import static com.innowise.accountingsystem.util.ResponseMessageUtil.CANNOT_FIND_EMPLOYEES;
 
 @Slf4j
 @NoArgsConstructor(access =  AccessLevel.PRIVATE)
@@ -41,7 +42,11 @@ public class GetAllEmployeesCommand implements Command {
                 String jsonEmployees = mapper.writeValueAsString(employees);
                 responseService.processResponse(response, HttpServletResponse.SC_OK, jsonEmployees);
             } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, CANNOT_FIND_EMPLOYEES);
+                ResponseMessage responseMessage = new ResponseMessage();
+                responseMessage.setMessage(CANNOT_FIND_EMPLOYEES);
+
+                String jsonError = mapper.writeValueAsString(responseMessage);
+                responseService.processResponse(response, HttpServletResponse.SC_NOT_FOUND, jsonError);
             }
         } catch (IOException | ServiceException e) {
             log.error("command exception trying to get all employees", e);

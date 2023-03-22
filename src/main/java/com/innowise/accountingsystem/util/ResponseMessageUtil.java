@@ -4,7 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ErrorMessageUtil {
+public final class ResponseMessageUtil {
+    public static final String SUCCESSFULLY_SIGNED_IN = "successfully signed in";
+    public static final String SUCCESSFULLY_LOGGED_OUT = "successfully logged out";
+    public static final String USER_DELETED= "user deleted";
     public static final String EMPLOYEE_NOT_FOUND = "employee not found";
     public static final String CANNOT_DELETE_EMPLOYEE = "cannot delete employee";
     public static final String INVALID_CREDENTIALS = "invalid credentials";

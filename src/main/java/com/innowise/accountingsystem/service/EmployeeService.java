@@ -84,19 +84,17 @@ public class EmployeeService {
     public Optional<EmployeeDto> getEmployeeByEmailAndPassword(String email, String password) {
         Optional<EmployeeDto> optionalEmployee = Optional.empty();
 
-        if (employeeValidator.isEmailValid(email) && employeeValidator.isPasswordValid(password)) {
-            try {
-                Optional<Employee> employee = employeeDao.findByEmail(email);
-                if (employee.isPresent()) {
-                    String hash = employee.get().getPassword();
-                    if (passwordEncoder.verify(hash, password)) {
-                        optionalEmployee = employee.map(employeeMapper::toDto);
-                    }
+        try {
+            Optional<Employee> employee = employeeDao.findByEmail(email);
+            if (employee.isPresent()) {
+                String hash = employee.get().getPassword();
+                if (passwordEncoder.verify(hash, password)) {
+                    optionalEmployee = employee.map(employeeMapper::toDto);
                 }
-            } catch (DaoException e) {
-                log.error("service exception trying to get employee by email and password", e);
-                throw new ServiceException(e);
             }
+        } catch (DaoException e) {
+            log.error("service exception trying to get employee by email and password", e);
+            throw new ServiceException(e);
         }
 
         return optionalEmployee;

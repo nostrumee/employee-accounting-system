@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.NO_SUCH_COMMAND;
+import static com.innowise.accountingsystem.util.ResponseMessageUtil.NO_SUCH_COMMAND;
 
 @WebServlet(name = "controller", urlPatterns = "/controller")
 public class Controller extends HttpServlet {
