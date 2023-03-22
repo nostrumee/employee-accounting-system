@@ -10,12 +10,14 @@ import com.innowise.accountingsystem.entity.Role;
 import com.innowise.accountingsystem.mapper.EmployeeMapper;
 import com.innowise.accountingsystem.util.PasswordEncoder;
 import com.innowise.accountingsystem.validation.EmployeeValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class EmployeeService {
 
     private static final EmployeeService INSTANCE = new EmployeeService();
@@ -48,7 +50,7 @@ public class EmployeeService {
                 EmployeeDto employeeDto = employeeMapper.toDto(employee);
                 optionalEmployee = Optional.of(employeeDto);
             } catch (DaoException e) {
-                //log
+                log.error("service exception trying to add employee", e);
                 throw new ServiceException(e);
             }
         }
@@ -63,9 +65,8 @@ public class EmployeeService {
             try {
                 Optional<Employee> employee = employeeDao.findById(Long.parseLong(id));
                 optionalEmployee = employee.map(employeeMapper::toDto);
-
             } catch (DaoException e) {
-                //log.error
+                log.error("service exception trying to get employee by id {}", id, e);
                 throw new ServiceException(e);
             }
         }
@@ -92,10 +93,8 @@ public class EmployeeService {
                         optionalEmployee = employee.map(employeeMapper::toDto);
                     }
                 }
-
-
             } catch (DaoException e) {
-                //log.error
+                log.error("service exception trying to get employee by email and password", e);
                 throw new ServiceException(e);
             }
         }
@@ -117,7 +116,7 @@ public class EmployeeService {
                     optionalEmployee = Optional.of(updatedEmployeeDto);
                 }
             } catch (DaoException e) {
-                //log.error
+                log.error("service exception trying to update employee", e);
                 throw new ServiceException(e);
             }
         }
@@ -131,7 +130,7 @@ public class EmployeeService {
                 employeeDao.findById(Long.parseLong(id));
                 return employeeDao.delete(Long.parseLong(id));
             } catch (DaoException e) {
-                //log.error
+                log.error("service exception trying to delete employee", e);
                 throw new ServiceException(e);
             }
         } else {

@@ -4,6 +4,7 @@ import com.innowise.accountingsystem.exception.DaoException;
 import com.innowise.accountingsystem.connection.ConnectionPool;
 import com.innowise.accountingsystem.entity.Employee;
 import com.innowise.accountingsystem.entity.Role;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import static com.innowise.accountingsystem.util.ColumnName.*;
 
+@Slf4j
 public class EmployeeDao {
 
     private static final String SQL_FIND_ALL = """
@@ -70,7 +72,7 @@ public class EmployeeDao {
                 employees.add(employee);
             }
         } catch (SQLException e) {
-            //logger.error("Dao exception trying find all employees", e);
+            log.error("dao exception trying to find all employees", e);
             throw new DaoException(e);
         }
 
@@ -92,7 +94,7 @@ public class EmployeeDao {
                 optionalEmployee = Optional.empty();
             }
         } catch (SQLException e) {
-            //logger.error("Dao exception trying to find employee by id", e);
+            log.error("dao exception trying to find employee by id {}", id, e);
             throw new DaoException(e);
         }
 
@@ -115,7 +117,7 @@ public class EmployeeDao {
                 optionalEmployee = Optional.empty();
             }
         } catch (SQLException e) {
-            //logger.error("Dao exception trying to find employee by id", e);
+            log.error("dao exception trying to find employee by email and password", e);
             throw new DaoException(e);
         }
 
@@ -137,7 +139,7 @@ public class EmployeeDao {
                 optionalEmployee = Optional.empty();
             }
         } catch (SQLException e) {
-            //logger.error("Dao exception trying to find employee by id", e);
+            log.error("dao exception trying to find employee by email {}", email, e);
             throw new DaoException(e);
         }
 
@@ -161,7 +163,7 @@ public class EmployeeDao {
             generatedKeys.next();
             employee.setId(generatedKeys.getObject(ID, Long.class));
         } catch (SQLException e) {
-            //logger.error("Dao exception trying save employee", e);
+            log.error("dao exception trying save employee", e);
             throw new DaoException(e);
         }
     }
@@ -183,7 +185,7 @@ public class EmployeeDao {
                 optionalEmployee = findById(employee.getId());
             }
         } catch (SQLException e) {
-            //logger.error("Dao exception trying update user", e);
+            log.error("dao exception trying update employee", e);
             throw new DaoException(e);
         }
 
@@ -197,7 +199,7 @@ public class EmployeeDao {
 
             return statement.executeUpdate() != 0;
         } catch (SQLException e) {
-            //logger.error("Dao exception trying delete user", e);
+            log.error("dao exception trying delete employee", e);
             throw new DaoException(e);
         }
     }

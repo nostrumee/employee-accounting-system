@@ -12,4 +12,5 @@ public final class ErrorMessageUtil {
     public static final String CANNOT_CREATE_EMPLOYEE = "cannot create employee";
     public static final String CANNOT_FIND_EMPLOYEES = "cannot find any employees";
     public static final String CANNOT_UPDATE_EMPLOYEE = "cannot update employee";
+    public static final String NO_SUCH_COMMAND = "there is no such command";
 }

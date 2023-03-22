@@ -1,6 +1,5 @@
 package com.innowise.accountingsystem.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import java.io.PrintWriter;
 public class ResponseService {
 
     private static final ResponseService INSTANCE = new ResponseService();
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public static ResponseService getInstance() {
         return INSTANCE;
