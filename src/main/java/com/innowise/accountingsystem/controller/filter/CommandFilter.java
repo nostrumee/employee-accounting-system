@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innowise.accountingsystem.command.Command;
 import com.innowise.accountingsystem.command.CommandType;
 import com.innowise.accountingsystem.dto.EmployeeDto;
-import com.innowise.accountingsystem.exception.ErrorMessage;
+import com.innowise.accountingsystem.validation.ErrorMessage;
 import com.innowise.accountingsystem.service.ResponseService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

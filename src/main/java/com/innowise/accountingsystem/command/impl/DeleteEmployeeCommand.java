@@ -3,7 +3,7 @@ package com.innowise.accountingsystem.command.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innowise.accountingsystem.command.Command;
 import com.innowise.accountingsystem.exception.CommandException;
-import com.innowise.accountingsystem.exception.ErrorMessage;
+import com.innowise.accountingsystem.validation.ErrorMessage;
 import com.innowise.accountingsystem.exception.ServiceException;
 import com.innowise.accountingsystem.service.EmployeeService;
 import com.innowise.accountingsystem.service.ResponseService;
@@ -11,10 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import static com.innowise.accountingsystem.util.AttributeName.ID;
-import static com.innowise.accountingsystem.util.ErrorMessageUtil.CANNOT_CREATE_EMPLOYEE;
 import static com.innowise.accountingsystem.util.ErrorMessageUtil.CANNOT_DELETE_EMPLOYEE;
 
 public class DeleteEmployeeCommand implements Command {

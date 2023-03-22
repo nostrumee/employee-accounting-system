@@ -1,6 +1,5 @@
-package com.innowise.accountingsystem.exception;
+package com.innowise.accountingsystem.validation;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -29,7 +29,7 @@ public class EmployeeDao {
             """;
     private static final String SQL_UPDATE = """
             UPDATE employee
-            SET email = ?, password = ?, first_name = ?, last_name = ?, salary = ?, birthday = ?, role = ?
+            SET email = ?, first_name = ?, last_name = ?, salary = ?, birthday = ?, role = ?
             WHERE id = ?
             """;
     private static final String SQL_DELETE = """
@@ -172,13 +172,12 @@ public class EmployeeDao {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)){
             statement.setString(1, employee.getEmail());
-            statement.setString(2, employee.getPassword());
-            statement.setString(3, employee.getFirstName());
-            statement.setString(4, employee.getLastName());
-            statement.setBigDecimal(5, employee.getSalary());
-            statement.setObject(6, employee.getBirthday());
-            statement.setString(7, employee.getRole().name());
-            statement.setObject(8, employee.getId());
+            statement.setString(2, employee.getFirstName());
+            statement.setString(3, employee.getLastName());
+            statement.setBigDecimal(4, employee.getSalary());
+            statement.setObject(5, employee.getBirthday());
+            statement.setString(6, employee.getRole().name());
+            statement.setObject(7, employee.getId());
 
             if (statement.executeUpdate() != 0){
                 optionalEmployee = findById(employee.getId());
