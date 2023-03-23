@@ -7,7 +7,7 @@ public class EmployeeValidator {
 
     private static final EmployeeValidator INSTANCE = new EmployeeValidator();
 
-    private static final String NAME_PATTERN = "/\\b[^\\d\\W]+\\b/g";
+    private static final String NAME_PATTERN = "\\b([A-Z][-,a-z. ']+[ ]*)+";
     private static final String EMAIL_PATTERN = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
     private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}$";
     private static final String ID_PATTERN = "^\\d{1,6}$";
