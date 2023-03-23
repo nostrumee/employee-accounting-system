@@ -18,7 +18,10 @@
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <jackson.version>2.14.2</jackson.version>
         <argon2.version>2.11</argon2.version>
-        <log4j.version>2.17.1</log4j.version>
+        <log4j.version>2.20.0</log4j.version>
+        <mockito.version>5.1.1</mockito.version>
+        <assertj.version>3.24.2</assertj.version>
+        <h2.version>2.1.214</h2.version>
     </properties>
 
     <dependencies>
@@ -88,6 +91,27 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

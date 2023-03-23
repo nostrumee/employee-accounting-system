@@ -34,6 +34,7 @@ public class LogOutCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         session.removeAttribute(LOGGED_EMPLOYEE);
+        session.invalidate();
 
         try {
             ResponseMessage responseMessage = new ResponseMessage();

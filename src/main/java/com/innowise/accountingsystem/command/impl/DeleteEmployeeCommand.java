@@ -36,14 +36,14 @@ public class DeleteEmployeeCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         try {
             String id = request.getParameter(ID);
+            ResponseMessage responseMessage = new ResponseMessage();
+
             if (employeeService.deleteEmployee(id)) {
-                ResponseMessage responseMessage = new ResponseMessage();
                 responseMessage.setMessage(USER_DELETED);
 
                 String json = mapper.writeValueAsString(responseMessage);
                 responseService.processResponse(response, HttpServletResponse.SC_OK, json);
             } else {
-                ResponseMessage responseMessage = new ResponseMessage();
                 responseMessage.setMessage(CANNOT_DELETE_EMPLOYEE);
 
                 String jsonError = mapper.writeValueAsString(responseMessage);

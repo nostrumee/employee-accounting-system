@@ -101,29 +101,6 @@ public class EmployeeDao {
         return optionalEmployee;
     }
 
-    public Optional<Employee> findByEmailAndPassword(String email, String password) {
-        Optional<Employee> optionalEmployee;
-
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_EMAIL_AND_PASSWORD)) {
-            statement.setString(1, email);
-            statement.setString(2, password);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                Employee employee = mapToEntity(resultSet);
-                optionalEmployee = Optional.of(employee);
-            } else {
-                optionalEmployee = Optional.empty();
-            }
-        } catch (SQLException e) {
-            log.error("dao exception trying to find employee by email and password", e);
-            throw new DaoException(e);
-        }
-
-        return optionalEmployee;
-    }
-
     public Optional<Employee> findByEmail(String email) {
         Optional<Employee> optionalEmployee;
 
@@ -146,7 +123,9 @@ public class EmployeeDao {
         return optionalEmployee;
     }
 
-    public void save(Employee employee) {
+    public Optional<Employee> save(Employee employee) {
+        Optional<Employee> optionalEmployee;
+
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_SAVE, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, employee.getEmail());
@@ -162,10 +141,13 @@ public class EmployeeDao {
             var generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
             employee.setId(generatedKeys.getObject(ID, Long.class));
+            optionalEmployee = Optional.of(employee);
         } catch (SQLException e) {
-            log.error("dao exception trying save employee", e);
+            log.error("dao exception trying to save employee", e);
             throw new DaoException(e);
         }
+
+        return optionalEmployee;
     }
 
     public Optional<Employee> update(Employee employee) {

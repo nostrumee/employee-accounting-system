@@ -38,7 +38,7 @@ public class EmployeeService {
     }
 
     public Optional<EmployeeDto> addEmployee(CreateEmployeeDto createEmployeeDto) {
-        Optional<EmployeeDto> optionalEmployee = Optional.empty();
+        Optional<EmployeeDto> optionalEmployeeDto = Optional.empty();
 
         if (employeeValidator.isCreateEmployeeDtoValid(createEmployeeDto)) {
             Employee employee = employeeMapper.fromCreateEmployeeDto(createEmployeeDto);
@@ -46,16 +46,15 @@ public class EmployeeService {
             employee.setRole(Role.USER);
 
             try {
-                employeeDao.save(employee);
-                EmployeeDto employeeDto = employeeMapper.toDto(employee);
-                optionalEmployee = Optional.of(employeeDto);
+                Optional<Employee> optionalEmployee = employeeDao.save(employee);
+                optionalEmployeeDto = optionalEmployee.map(employeeMapper::toDto);
             } catch (DaoException e) {
                 log.error("service exception trying to add employee", e);
                 throw new ServiceException(e);
             }
         }
 
-        return optionalEmployee;
+        return optionalEmployeeDto;
     }
 
     public Optional<EmployeeDto> getEmployeeById(String id) {

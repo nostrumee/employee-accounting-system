@@ -48,17 +48,16 @@ public class SignInCommand implements Command {
             String password = loggingEmployee.getPassword();
             Optional<EmployeeDto> optionalEmployee = employeeService.getEmployeeByEmailAndPassword(email, password);
 
+            ResponseMessage responseMessage = new ResponseMessage();
+
             if (optionalEmployee.isPresent()) {
                 EmployeeDto employee = optionalEmployee.get();
                 session.setAttribute(AttributeName.LOGGED_EMPLOYEE, employee);
 
-                ResponseMessage responseMessage = new ResponseMessage();
                 responseMessage.setMessage(SUCCESSFULLY_SIGNED_IN);
-
                 String json = mapper.writeValueAsString(responseMessage);
                 responseService.processResponse(response, HttpServletResponse.SC_OK, json);
             } else {
-                ResponseMessage responseMessage = new ResponseMessage();
                 responseMessage.setMessage(INVALID_CREDENTIALS);
                 String jsonError = mapper.writeValueAsString(responseMessage);
                 responseService.processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, jsonError);
