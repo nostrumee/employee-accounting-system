@@ -2,10 +2,12 @@ package com.innowise.accountingsystem.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Properties;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PropertiesUtil {
 
@@ -25,9 +27,8 @@ public final class PropertiesUtil {
         try (var inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME)) {
             PROPERTIES.load(inputStream);
         } catch (IOException e) {
-            //log.error("error loading properties", e.getMessage()
+            log.error("error loading properties", e);
             throw new RuntimeException(e);
         }
     }
-
 }

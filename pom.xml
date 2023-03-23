@@ -19,9 +19,13 @@
         <jackson.version>2.14.2</jackson.version>
         <argon2.version>2.11</argon2.version>
         <log4j.version>2.20.0</log4j.version>
-        <mockito.version>5.1.1</mockito.version>
+        <junit.jupiter.version>5.8.1</junit.jupiter.version>
+        <mockito.version>5.2.0</mockito.version>
         <assertj.version>3.24.2</assertj.version>
         <h2.version>2.1.214</h2.version>
+        <maven.surefire.plugin.verion>2.22.2</maven.surefire.plugin.verion>
+        <maven.war.plugin.version>3.3.2</maven.war.plugin.version>
+        <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
     </properties>
 
     <dependencies>
@@ -94,6 +98,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
@@ -114,4 +125,28 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.verion}</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>

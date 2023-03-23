@@ -1,6 +1,7 @@
 package com.innowise.accountingsystem.connection;
 
 import com.innowise.accountingsystem.util.PropertiesUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Slf4j
 public class ConnectionPool {
 
     private static ConnectionPool instance;
@@ -49,7 +51,7 @@ public class ConnectionPool {
                 createConnection();
             }
         } catch (InterruptedException | SQLException e) {
-            //log.error
+            log.error("error during connection pool initialization", e);
             throw new RuntimeException(e);
         }
     }
@@ -76,7 +78,7 @@ public class ConnectionPool {
         try {
             connection = connections.take();
         } catch (InterruptedException e) {
-            //logger.error("Interrupted exception in get connection method", e);
+            log.error("Interrupted exception in get connection method", e);
             Thread.currentThread().interrupt();
         }
 
@@ -88,7 +90,7 @@ public class ConnectionPool {
             try {
                 connections.put(proxyConnection);
             } catch (InterruptedException e) {
-                //logger.error("Interrupted exception in release connection method", e);
+                log.error("Interrupted exception in release connection method", e);
                 Thread.currentThread().interrupt();
             }
         }
@@ -99,10 +101,10 @@ public class ConnectionPool {
             try {
                 connections.take().reallyClose();
             } catch (InterruptedException e) {
-                //log.error("Interrupted exception in destroy pool method", e);
+                log.error("Interrupted exception in close pool method", e);
                 Thread.currentThread().interrupt();
             } catch (SQLException e) {
-                //logger.error("SQL exception in get destroy pool method", e);
+                log.error("SQL exception in get destroy pool method", e);
             }
         }
     }
@@ -117,7 +119,7 @@ public class ConnectionPool {
         try {
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
-            //log.error
+            log.error("cannot load database driver", e);
             throw new RuntimeException(e);
         }
     }

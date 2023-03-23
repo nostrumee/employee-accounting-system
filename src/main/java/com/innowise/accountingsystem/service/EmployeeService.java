@@ -21,10 +21,11 @@ import java.util.stream.Collectors;
 public class EmployeeService {
 
     private static final EmployeeService INSTANCE = new EmployeeService();
-    private final EmployeeDao employeeDao;
     private final EmployeeMapper employeeMapper;
     private final PasswordEncoder passwordEncoder;
     private final EmployeeValidator employeeValidator;
+
+    private EmployeeDao employeeDao;
 
     private EmployeeService() {
         this.employeeDao = EmployeeDao.getInstance();

@@ -50,7 +50,7 @@ public class EmployeeDao {
             """;
 
     private static final EmployeeDao instance = new EmployeeDao();
-    private final ConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
     private EmployeeDao() {
         connectionPool = ConnectionPool.getInstance();

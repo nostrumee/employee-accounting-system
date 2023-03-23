@@ -14,9 +14,9 @@ public class App {
     public static void main(String[] args) throws JsonProcessingException {
         final EmployeeService employeeService = EmployeeService.getInstance();
         final PasswordEncoder passwordEncoder = PasswordEncoder.getInstance();
-        String hash1 = passwordEncoder.encode("ewrwerw");
+        String hash1 = passwordEncoder.encode("AbcdeFu321");
         System.out.println(hash1);;
 
-        System.out.println(passwordEncoder.verify(hash1, "ewrwerw"));
+        System.out.println(passwordEncoder.verify(hash1, "AbcdeFu321"));
     }
 }
