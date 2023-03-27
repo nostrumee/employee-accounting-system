@@ -22,7 +22,7 @@ import java.util.Optional;
 import static com.innowise.accountingsystem.util.ResponseMessageUtil.CANNOT_CREATE_EMPLOYEE;
 
 @Slf4j
-@NoArgsConstructor(access =  AccessLevel.PRIVATE)
+@NoArgsConstructor(access =  AccessLevel.PACKAGE)
 public class AddEmployeeCommand implements Command {
 
     private static final AddEmployeeCommand INSTANCE = new AddEmployeeCommand();
